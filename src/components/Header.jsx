@@ -20,13 +20,11 @@ function Header() {
         <div className="top-links">
         <a href="#">Bizning do‘konlar</a>
         <a href="#">To‘lov usullari</a>
-        <a href="#">Muddatli to‘lov</a>
-        <a href="#">Qaytarish va almashtirish</a>
         <a href="#">Yetkazib berish</a>
         </div>
         
         <div className="contact-center">
-        <span>Kontakt markaz:</span>
+        <span>Kontakt:</span>
         <b>+998 99 818 00 25</b>
         </div>
         </div>
@@ -34,22 +32,29 @@ function Header() {
         
         <header className="main-header">
         <div className="container main-header-content">
+        <div className="mobile-header-top">
         <Link to="/" className="brand-logo">
         <span>Diskont</span>
         <small>tech market</small>
         </Link>
         
-        <button className="catalog-btn">
-        <span>☰</span>
-        Katalog
-        </button>
+        <Link to="/cart" className="mobile-cart-btn">
+        🛒
+        {totalCount > 0 && <b>{totalCount}</b>}
+        </Link>
+        </div>
         
         <div className="header-search">
-        <input type="text" placeholder="Mahsulotlarni qidirish..." />
+        <input type="text" placeholder="Mahsulot qidirish..." />
         <button>Qidirish</button>
         </div>
         
         <nav className="header-actions">
+        <Link to="/" className="header-action">
+        <span>🏠</span>
+        Bosh sahifa
+        </Link>
+        
         {isAdmin && (
             <>
             <Link to="/admin/dashboard" className="header-action">
@@ -76,21 +81,28 @@ function Header() {
             </Link>
         )}
         
-        <Link to="/cart" className="header-action cart-action">
+        <Link to="/cart" className="header-action desktop-cart-action">
         <span>🛒</span>
         Savatcha
         {totalCount > 0 && <b>{totalCount}</b>}
         </Link>
         
         {!user ? (
-            <Link to="/login" className="login-btn">
+            <>
+            <Link to="/login" className="header-action">
+            <span>👤</span>
             Kirish
             </Link>
+            
+            <Link to="/register" className="header-action">
+            <span>➕</span>
+            Register
+            </Link>
+            </>
         ) : (
-            <div className="user-menu">
-            <span>{user.name}</span>
-            <button onClick={handleLogout}>Chiqish</button>
-            </div>
+            <button onClick={handleLogout} className="mobile-logout-btn">
+            Chiqish
+            </button>
         )}
         </nav>
         </div>
@@ -103,7 +115,7 @@ function Header() {
         <Link to="#">Noutbuklar</Link>
         <Link to="#">Televizorlar</Link>
         <Link to="#">Muzlatgichlar</Link>
-        <Link to="#">Kir yuvish mashinalari</Link>
+        <Link to="#">Kir yuvish</Link>
         <Link to="#">Changyutgichlar</Link>
         </div>
         </div>

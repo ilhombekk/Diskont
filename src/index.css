@@ -1258,3 +1258,510 @@ body {
     gap: 12px;
   }
 }
+
+/* =========================
+MOBILE RESPONSIVE FIX
+========================= */
+
+.mobile-header-top {
+  display: contents;
+}
+
+.mobile-cart-btn {
+  display: none;
+}
+
+.mobile-logout-btn {
+  border: none;
+  background: #ef4444;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* Planshet */
+@media (max-width: 900px) {
+  body {
+    background: #f4f5f7;
+  }
+  
+  .top-header {
+    display: none;
+  }
+  
+  .main-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+  }
+  
+  .main-header-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 0;
+  }
+  
+  .mobile-header-top {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .brand-logo span {
+    font-size: 26px;
+  }
+  
+  .brand-logo small {
+    font-size: 11px;
+  }
+  
+  .mobile-cart-btn {
+    display: flex;
+    position: relative;
+    width: 46px;
+    height: 46px;
+    background: #fff3e6;
+    color: #ff7a00;
+    border-radius: 14px;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  
+  .mobile-cart-btn b {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 22px;
+    height: 22px;
+    background: #ff7a00;
+    color: white;
+    border-radius: 999px;
+    font-size: 12px;
+    display: grid;
+    place-items: center;
+  }
+  
+  .desktop-cart-action {
+    display: none;
+  }
+  
+  .catalog-btn {
+    display: none;
+  }
+  
+  .header-search {
+    width: 100%;
+    height: 44px;
+    display: grid;
+    grid-template-columns: 1fr 88px;
+    border-radius: 12px;
+  }
+  
+  .header-search input {
+    font-size: 14px;
+    padding: 0 12px;
+  }
+  
+  .header-search button {
+    font-size: 13px;
+  }
+  
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 0;
+  }
+  
+  .header-action {
+    min-width: auto;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 9px 4px;
+    font-size: 11px;
+    text-align: center;
+  }
+  
+  .header-action span {
+    font-size: 18px;
+  }
+  
+  .mobile-logout-btn {
+    width: 100%;
+    padding: 11px 8px;
+    font-size: 12px;
+  }
+  
+  .category-strip-content {
+    gap: 12px;
+    overflow-x: auto;
+    padding: 10px 0;
+  }
+  
+  .category-strip-content::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .category-strip-content a {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 9px 13px;
+    border-radius: 999px;
+    font-size: 13px;
+  }
+  
+  .diskont-hero {
+    margin-top: 16px;
+    padding: 24px;
+    min-height: auto;
+    border-radius: 20px;
+    grid-template-columns: 1fr;
+  }
+  
+  .diskont-hero h1 {
+    font-size: 28px;
+    line-height: 1.15;
+  }
+  
+  .diskont-hero p {
+    font-size: 15px;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .hero-actions button {
+    width: 100%;
+  }
+  
+  .hero-card {
+    display: none;
+  }
+  
+  .popular-category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .popular-category-grid button {
+    padding: 16px 10px;
+    border-radius: 14px;
+    font-size: 13px;
+  }
+  
+  .popular-category-grid button span {
+    font-size: 24px;
+  }
+  
+  .section-head h2 {
+    font-size: 22px;
+  }
+  
+  .filters-panel {
+    padding: 14px;
+  }
+  
+  .price-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .price-filter input {
+    min-width: 0;
+    width: 100%;
+  }
+  
+  .category-filter {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+  }
+  
+  .category-filter::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .category-filter button {
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+  
+  .products-grid,
+  .diskont-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  
+  .product-card {
+    border-radius: 16px;
+  }
+  
+  .product-image-box {
+    padding: 10px;
+  }
+  
+  .product-card img {
+    height: 150px;
+  }
+  
+  .product-info {
+    padding: 12px;
+  }
+  
+  .product-title {
+    font-size: 14px;
+    min-height: 40px;
+  }
+  
+  .monthly-price {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+  
+  .price {
+    font-size: 16px;
+  }
+  
+  .buy-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  .badge {
+    font-size: 10px;
+    padding: 4px 7px;
+  }
+}
+
+/* Telefon */
+@media (max-width: 560px) {
+  .container {
+    width: 94%;
+  }
+  
+  .main {
+    padding: 18px 0;
+  }
+  
+  .main-header-content {
+    gap: 10px;
+  }
+  
+  .brand-logo span {
+    font-size: 24px;
+  }
+  
+  .header-search {
+    grid-template-columns: 1fr 78px;
+    height: 42px;
+  }
+  
+  .header-search input {
+    font-size: 13px;
+  }
+  
+  .header-search button {
+    font-size: 12px;
+  }
+  
+  .header-actions {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  
+  .header-action {
+    font-size: 10px;
+    padding: 8px 3px;
+    border-radius: 10px;
+  }
+  
+  .header-action span {
+    font-size: 17px;
+  }
+  
+  .mobile-logout-btn {
+    font-size: 10px;
+    padding: 9px 4px;
+    border-radius: 10px;
+  }
+  
+  .category-strip-content a {
+    font-size: 12px;
+    padding: 8px 11px;
+  }
+  
+  .diskont-hero {
+    padding: 20px;
+  }
+  
+  .hero-label {
+    font-size: 12px;
+    padding: 7px 11px;
+  }
+  
+  .diskont-hero h1 {
+    font-size: 24px;
+  }
+  
+  .diskont-hero p {
+    font-size: 14px;
+  }
+  
+  .popular-categories,
+  .products-section {
+    margin-top: 24px;
+  }
+  
+  .popular-category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .popular-category-grid button {
+    min-height: 92px;
+  }
+  
+  .section-head {
+    gap: 10px;
+  }
+  
+  .section-head h2 {
+    font-size: 21px;
+  }
+  
+  .clear-filter-btn {
+    width: 100%;
+  }
+  
+  .price-filter {
+    grid-template-columns: 1fr;
+  }
+  
+  .products-grid,
+  .diskont-products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-card {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    align-items: stretch;
+    min-height: 190px;
+  }
+  
+  .product-badges {
+    left: 8px;
+    top: 8px;
+  }
+  
+  .product-image-box {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .product-card img {
+    height: 125px;
+    width: 100%;
+    object-fit: contain;
+  }
+  
+  .product-info {
+    padding: 12px;
+  }
+  
+  .product-category {
+    font-size: 12px;
+  }
+  
+  .product-title {
+    font-size: 14px;
+    min-height: auto;
+    margin: 5px 0 7px;
+  }
+  
+  .stock {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  
+  .monthly-price {
+    font-size: 11px;
+    margin-bottom: 7px;
+  }
+  
+  .price {
+    font-size: 15px;
+    margin-bottom: 9px;
+  }
+  
+  .buy-btn {
+    padding: 9px;
+    font-size: 12px;
+    border-radius: 10px;
+  }
+  
+  .cart-item {
+    grid-template-columns: 90px 1fr;
+    text-align: left;
+    gap: 12px;
+  }
+  
+  .cart-item img {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .cart-actions {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+  
+  .checkout-layout,
+  .product-detail {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-detail {
+    padding: 18px;
+  }
+  
+  .product-detail img {
+    height: 260px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-table-wrapper {
+    overflow-x: auto;
+  }
+}
+
+/* Juda kichik telefonlar */
+@media (max-width: 380px) {
+  .product-card {
+    grid-template-columns: 110px 1fr;
+  }
+  
+  .product-card img {
+    height: 110px;
+  }
+  
+  .header-actions {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
