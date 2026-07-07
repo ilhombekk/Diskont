@@ -20,54 +20,10 @@ const generateToken = (userId) => {
 
 // Register
 router.post("/register", async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-        
-        if (!name || !email || !password) {
-            return res.status(400).json({
-                message: "Name, email va password majburiy.",
-            });
-        }
-        
-        const existsUser = await User.findOne({ email });
-        
-        if (existsUser) {
-            return res.status(400).json({
-                message: "Bu email allaqachon ro‘yxatdan o‘tgan.",
-            });
-        }
-        
-        const usersCount = await User.countDocuments();
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        const user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            
-            // Birinchi ro‘yxatdan o‘tgan user admin bo‘ladi
-            role: usersCount === 0 ? "admin" : "user",
-        });
-        
-        res.status(201).json({
-            message: "Ro‘yxatdan o‘tish muvaffaqiyatli.",
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-            },
-            token: generateToken(user._id),
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Register xatosi.",
-            error: error.message,
-        });
-    }
+    return res.status(403).json({
+        message: "Ro‘yxatdan o‘tish yopilgan.",
+    });
 });
-
 // Login
 router.post("/login", async (req, res) => {
     try {

@@ -1765,3 +1765,12 @@ MOBILE RESPONSIVE FIX
     grid-template-columns: repeat(3, 1fr);
   }
 }
+.admin-login-link {
+  margin-left: 16px;
+  color: #ff7a00;
+  font-weight: 800;
+}
+
+.mobile-admin-link {
+  opacity: 0.75;
+}

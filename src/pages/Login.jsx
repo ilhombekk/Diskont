@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -28,11 +28,12 @@ function Login() {
             
             const user = await login(form.email, form.password);
             
-            if (user.role === "admin") {
-                navigate("/admin/products");
-            } else {
-                navigate("/");
+            if (user.role !== "admin") {
+                setError("Bu bo‘lim faqat admin uchun.");
+                return;
             }
+            
+            navigate("/admin/dashboard");
         } catch (error) {
             setError(error.response?.data?.message || "Login xatosi");
         }
@@ -41,7 +42,7 @@ function Login() {
     return (
         <div className="container auth-page">
         <form onSubmit={submitLogin} className="auth-form">
-        <h1>Login</h1>
+        <h1>Admin panelga kirish</h1>
         
         {error && <p className="error-text">{error}</p>}
         
@@ -52,7 +53,7 @@ function Login() {
         name="email"
         value={form.email}
         onChange={handleChange}
-        placeholder="Email"
+        placeholder="Admin email"
         />
         </label>
         
@@ -63,17 +64,13 @@ function Login() {
         name="password"
         value={form.password}
         onChange={handleChange}
-        placeholder="Parol"
+        placeholder="Admin parol"
         />
         </label>
         
         <button className="btn" type="submit">
         Kirish
         </button>
-        
-        <p>
-        Akkount yo‘qmi? <Link to="/register">Ro‘yxatdan o‘tish</Link>
-        </p>
         </form>
         </div>
     );

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Header from "./components/Header";
 import AdminRoute from "./components/AdminRoute";
@@ -8,7 +8,6 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import ProductDetail from "./pages/ProductDetail";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
 import MyOrders from "./pages/MyOrders";
@@ -26,8 +25,12 @@ function App() {
     <Route path="/cart" element={<Cart />} />
     <Route path="/checkout" element={<Checkout />} />
     
-    <Route path="/login" element={<Login />} />
-    <Route path="/register" element={<Register />} />
+    {/* Admin uchun alohida login */}
+    <Route path="/admin-login" element={<Login />} />
+    
+    {/* Eski login/register linklar ishlamasin */}
+    <Route path="/login" element={<Navigate to="/admin-login" />} />
+    <Route path="/register" element={<Navigate to="/" />} />
     
     <Route path="/my-orders" element={<MyOrders />} />
     

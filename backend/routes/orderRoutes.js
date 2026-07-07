@@ -8,9 +8,9 @@ const router = express.Router();
 /**
 * Buyurtma yaratish
 * POST /api/orders
-* Faqat login qilgan user
+* Public — login shart emas
 */
-router.post("/", protect, async (req, res) => {
+router.post("/", async (req, res) => {
     try {
         const { customerName, phone, address, payment, items, totalPrice } = req.body;
         
@@ -26,10 +26,6 @@ router.post("/", protect, async (req, res) => {
             });
         }
         
-        /*
-        1-qadam:
-        Har bir mahsulot MongoDBda bormi va stock yetarlimi tekshiramiz
-        */
         for (const item of items) {
             const product = await Product.findById(item.product);
             
@@ -52,10 +48,6 @@ router.post("/", protect, async (req, res) => {
             }
         }
         
-        /*
-        2-qadam:
-        Stock yetarli bo‘lsa, har bir mahsulot sonini kamaytiramiz
-        */
         for (const item of items) {
             await Product.findByIdAndUpdate(item.product, {
                 $inc: {
@@ -64,12 +56,8 @@ router.post("/", protect, async (req, res) => {
             });
         }
         
-        /*
-        3-qadam:
-        Buyurtmani MongoDBga saqlaymiz
-        */
         const order = await Order.create({
-            user: req.user._id,
+            user: null,
             customerName,
             phone,
             address,
@@ -94,7 +82,6 @@ router.post("/", protect, async (req, res) => {
 /**
 * Admin barcha buyurtmalarni ko‘radi
 * GET /api/orders
-* Faqat admin
 */
 router.get("/", protect, adminOnly, async (req, res) => {
     try {
@@ -112,9 +99,7 @@ router.get("/", protect, adminOnly, async (req, res) => {
 });
 
 /**
-* User o‘z buyurtmalarini ko‘radi
-* GET /api/orders/my
-* Login qilgan user
+* User buyurtmalari — hozir ishlatilmaydi
 */
 router.get("/my", protect, async (req, res) => {
     try {
@@ -135,8 +120,6 @@ router.get("/my", protect, async (req, res) => {
 
 /**
 * Admin bitta buyurtmani ko‘radi
-* GET /api/orders/:id
-* Faqat admin
 */
 router.get("/:id", protect, adminOnly, async (req, res) => {
     try {
@@ -161,9 +144,7 @@ router.get("/:id", protect, adminOnly, async (req, res) => {
 });
 
 /**
-* Admin buyurtma statusini o‘zgartiradi
-* PUT /api/orders/:id/status
-* Faqat admin
+* Admin status o‘zgartiradi
 */
 router.put("/:id/status", protect, adminOnly, async (req, res) => {
     try {

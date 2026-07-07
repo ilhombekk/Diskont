@@ -1,14 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
 import api from "../api/api";
 
 function Checkout() {
-    const navigate = useNavigate();
-    
     const { cartItems, totalPrice, clearCart } = useCart();
-    const { user } = useAuth();
     
     const [form, setForm] = useState({
         name: "",
@@ -30,13 +26,8 @@ function Checkout() {
     const submitOrder = async (e) => {
         e.preventDefault();
         
-        if (!user) {
-            navigate("/login");
-            return;
-        }
-        
         if (!form.name || !form.phone || !form.address) {
-            alert("Iltimos, barcha maydonlarni to‘ldiring");
+            alert("Iltimos, ism, telefon va manzilni to‘ldiring");
             return;
         }
         
@@ -72,6 +63,7 @@ function Checkout() {
             <div className="container success-box">
             <h1>Buyurtma qabul qilindi!</h1>
             <p>Tez orada operator siz bilan bog‘lanadi.</p>
+            
             <Link to="/" className="btn">
             Bosh sahifaga qaytish
             </Link>
@@ -83,6 +75,7 @@ function Checkout() {
         return (
             <div className="container empty-cart">
             <h2>Savatcha bo‘sh</h2>
+            
             <Link to="/" className="btn">
             Mahsulot tanlash
             </Link>
@@ -153,6 +146,7 @@ function Checkout() {
             <span>
             {item.name} x {item.quantity}
             </span>
+            
             <b>{(item.price * item.quantity).toLocaleString()} so‘m</b>
             </div>
         ))}

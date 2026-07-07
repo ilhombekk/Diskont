@@ -5,7 +5,7 @@ function AdminRoute({ children }) {
     const { user, isAdmin } = useAuth();
     
     if (!user) {
-        return <Navigate to="/login" />;
+        return <Navigate to="/admin-login" />;
     }
     
     if (!isAdmin) {

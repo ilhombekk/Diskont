@@ -26,6 +26,12 @@ function Header() {
         <div className="contact-center">
         <span>Kontakt:</span>
         <b>+998 99 818 00 25</b>
+        
+        {!user && (
+            <Link to="/admin-login" className="admin-login-link">
+            Admin panel
+            </Link>
+        )}
         </div>
         </div>
         </div>
@@ -74,35 +80,23 @@ function Header() {
             </>
         )}
         
-        {user && !isAdmin && (
-            <Link to="/my-orders" className="header-action">
-            <span>🧾</span>
-            Buyurtmalarim
-            </Link>
-        )}
-        
         <Link to="/cart" className="header-action desktop-cart-action">
         <span>🛒</span>
         Savatcha
         {totalCount > 0 && <b>{totalCount}</b>}
         </Link>
         
-        {!user ? (
-            <>
-            <Link to="/login" className="header-action">
-            <span>👤</span>
-            Kirish
-            </Link>
-            
-            <Link to="/register" className="header-action">
-            <span>➕</span>
-            Register
-            </Link>
-            </>
-        ) : (
+        {isAdmin && (
             <button onClick={handleLogout} className="mobile-logout-btn">
             Chiqish
             </button>
+        )}
+        
+        {!user && (
+            <Link to="/admin-login" className="header-action mobile-admin-link">
+            <span>🔐</span>
+            Admin
+            </Link>
         )}
         </nav>
         </div>
