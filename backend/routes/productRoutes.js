@@ -1,15 +1,34 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
+import csvParser from "csv-parser";
+import { Readable } from "stream";
+
 import Product from "../models/Product.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+const parseBoolean = (value) => {
+    if (typeof value === "boolean") return value;
+    
+    const normalized = String(value || "")
+    .trim()
+    .toLowerCase();
+    
+    return normalized === "true" || normalized === "1" || normalized === "ha";
+};
+
+const parseNumber = (value, defaultValue = 0) => {
+    const number = Number(value);
+    
+    return Number.isNaN(number) ? defaultValue : number;
+};
+
 /**
-* Multer storage
+* Image upload storage
 */
-const storage = multer.diskStorage({
+const imageStorage = multer.diskStorage({
     destination(req, file, cb) {
         cb(null, "uploads/");
     },
@@ -21,10 +40,7 @@ const storage = multer.diskStorage({
     },
 });
 
-/**
-* Faqat rasm fayllarga ruxsat
-*/
-const fileFilter = (req, file, cb) => {
+const imageFileFilter = (req, file, cb) => {
     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     
     if (allowedTypes.includes(file.mimetype)) {
@@ -34,34 +50,62 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({
-    storage,
-    fileFilter,
+const uploadImage = multer({
+    storage: imageStorage,
+    fileFilter: imageFileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+        fileSize: 5 * 1024 * 1024,
     },
 });
 
 /**
-* Barcha mahsulotlar
-* GET /api/products
+* CSV import upload
 */
-router.get("/", async (req, res) => {
-    try {
-        const products = await Product.find().sort({ createdAt: -1 });
+const uploadCsv = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 3 * 1024 * 1024,
+    },
+    fileFilter(req, file, cb) {
+        const allowedMimeTypes = [
+            "text/csv",
+            "application/vnd.ms-excel",
+            "application/csv",
+        ];
         
-        res.json(products);
-    } catch (error) {
-        res.status(500).json({
-            message: "Mahsulotlarni olishda xatolik.",
-            error: error.message,
-        });
-    }
+        const ext = path.extname(file.originalname).toLowerCase();
+        
+        if (allowedMimeTypes.includes(file.mimetype) || ext === ".csv") {
+            cb(null, true);
+        } else {
+            cb(new Error("Faqat CSV fayl yuklash mumkin."), false);
+        }
+    },
 });
 
+const parseCsvBuffer = (buffer) => {
+    return new Promise((resolve, reject) => {
+        const rows = [];
+        
+        const stream = Readable.from(buffer.toString("utf8"));
+        
+        stream
+        .pipe(csvParser())
+        .on("data", (row) => {
+            rows.push(row);
+        })
+        .on("end", () => {
+            resolve(rows);
+        })
+        .on("error", (error) => {
+            reject(error);
+        });
+    });
+};
+
 /**
-* Bitta mahsulot
-* GET /api/products/:id
+* Barcha mahsulotlar
+* GET /api/products
 */
 router.get("/", async (req, res) => {
     try {
@@ -70,10 +114,26 @@ router.get("/", async (req, res) => {
         const filter = {};
         
         if (search) {
-            filter.name = {
-                $regex: search,
-                $options: "i",
-            };
+            filter.$or = [
+                {
+                    name: {
+                        $regex: search,
+                        $options: "i",
+                    },
+                },
+                {
+                    category: {
+                        $regex: search,
+                        $options: "i",
+                    },
+                },
+                {
+                    description: {
+                        $regex: search,
+                        $options: "i",
+                    },
+                },
+            ];
         }
         
         if (category && category !== "Barchasi") {
@@ -104,65 +164,110 @@ router.get("/", async (req, res) => {
 });
 
 /**
-* Mahsulot qo‘shish
-* POST /api/products
-* Admin
-*
-* imageFile — kompyuterdan yuklangan rasm
-* imageUrl — internetdagi rasm URL
+* CSV orqali mahsulot import qilish
+* POST /api/products/import
 */
-router.post("/", protect, adminOnly, upload.single("imageFile"), async (req, res) => {
-    try {
-        const { name, category, price, imageUrl, description, stock } = req.body;
-        
-        if (!name || !category || !price || !description) {
-            return res.status(400).json({
-                message: "Nomi, kategoriya, narx va izoh majburiy.",
+router.post(
+    "/import",
+    protect,
+    adminOnly,
+    uploadCsv.single("file"),
+    async (req, res) => {
+        try {
+            if (!req.file) {
+                return res.status(400).json({
+                    message: "CSV fayl tanlanmagan.",
+                });
+            }
+            
+            const rows = await parseCsvBuffer(req.file.buffer);
+            
+            if (!rows || rows.length === 0) {
+                return res.status(400).json({
+                    message: "CSV faylda ma’lumot yo‘q.",
+                });
+            }
+            
+            const productsToCreate = [];
+            const errors = [];
+            
+            rows.forEach((row, index) => {
+                const line = index + 2;
+                
+                const name = row.name?.trim();
+                const category = row.category?.trim();
+                const price = parseNumber(row.price);
+                const oldPrice = parseNumber(row.oldPrice);
+                const image = row.imageUrl?.trim() || row.image?.trim();
+                const description = row.description?.trim();
+                const stock = parseNumber(row.stock);
+                const isHit = parseBoolean(row.isHit);
+                const isFeatured = parseBoolean(row.isFeatured);
+                
+                if (!name) {
+                    errors.push(`${line}-qatorda name yo‘q.`);
+                }
+                
+                if (!category) {
+                    errors.push(`${line}-qatorda category yo‘q.`);
+                }
+                
+                if (!price || price <= 0) {
+                    errors.push(`${line}-qatorda price noto‘g‘ri.`);
+                }
+                
+                if (!image) {
+                    errors.push(`${line}-qatorda imageUrl yo‘q.`);
+                }
+                
+                if (!description) {
+                    errors.push(`${line}-qatorda description yo‘q.`);
+                }
+                
+                if (name && category && price > 0 && image && description) {
+                    productsToCreate.push({
+                        name,
+                        category,
+                        price,
+                        oldPrice,
+                        image,
+                        description,
+                        stock,
+                        isHit,
+                        isFeatured,
+                    });
+                }
+            });
+            
+            if (errors.length > 0) {
+                return res.status(400).json({
+                    message: "CSV faylda xatolik bor.",
+                    errors,
+                });
+            }
+            
+            const createdProducts = await Product.insertMany(productsToCreate);
+            
+            res.status(201).json({
+                message: `${createdProducts.length} ta mahsulot import qilindi.`,
+                count: createdProducts.length,
+                products: createdProducts,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "CSV import qilishda xatolik.",
+                error: error.message,
             });
         }
-        
-        let image = imageUrl;
-        
-        if (req.file) {
-            image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-        }
-        
-        if (!image) {
-            return res.status(400).json({
-                message: "Rasm yuklang yoki rasm URL kiriting.",
-            });
-        }
-        
-        const product = await Product.create({
-            name,
-            category,
-            price: Number(price),
-            image,
-            description,
-            stock: Number(stock) || 0,
-        });
-        
-        res.status(201).json({
-            message: "Mahsulot qo‘shildi.",
-            product,
-        });
-    } catch (error) {
-        res.status(500).json({
-            message: "Mahsulot qo‘shishda xatolik.",
-            error: error.message,
-        });
     }
-});
+);
 
 /**
-* Mahsulot tahrirlash
-* PUT /api/products/:id
-* Admin
+* Bitta mahsulot
+* GET /api/products/:id
 */
-router.put("/:id", protect, adminOnly, upload.single("imageFile"), async (req, res) => {
+router.get("/:id", async (req, res) => {
     try {
-        const { name, category, price, imageUrl, description, stock } = req.body;
-        
         const product = await Product.findById(req.params.id);
         
         if (!product) {
@@ -171,41 +276,152 @@ router.put("/:id", protect, adminOnly, upload.single("imageFile"), async (req, r
             });
         }
         
-        let image = product.image;
-        
-        if (imageUrl) {
-            image = imageUrl;
-        }
-        
-        if (req.file) {
-            image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-        }
-        
-        product.name = name || product.name;
-        product.category = category || product.category;
-        product.price = price ? Number(price) : product.price;
-        product.image = image;
-        product.description = description || product.description;
-        product.stock = stock !== undefined ? Number(stock) : product.stock;
-        
-        await product.save();
-        
-        res.json({
-            message: "Mahsulot yangilandi.",
-            product,
-        });
+        res.json(product);
     } catch (error) {
         res.status(500).json({
-            message: "Mahsulotni yangilashda xatolik.",
+            message: "Mahsulotni olishda xatolik.",
             error: error.message,
         });
     }
 });
 
 /**
+* Mahsulot qo‘shish
+* POST /api/products
+*/
+router.post(
+    "/",
+    protect,
+    adminOnly,
+    uploadImage.single("imageFile"),
+    async (req, res) => {
+        try {
+            const {
+                name,
+                category,
+                price,
+                oldPrice,
+                imageUrl,
+                description,
+                stock,
+                isHit,
+                isFeatured,
+            } = req.body;
+            
+            if (!name || !category || !price || !description) {
+                return res.status(400).json({
+                    message: "Nomi, kategoriya, narx va izoh majburiy.",
+                });
+            }
+            
+            let image = imageUrl;
+            
+            if (req.file) {
+                image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+            }
+            
+            if (!image) {
+                return res.status(400).json({
+                    message: "Rasm yuklang yoki rasm URL kiriting.",
+                });
+            }
+            
+            const product = await Product.create({
+                name,
+                category,
+                price: parseNumber(price),
+                oldPrice: parseNumber(oldPrice),
+                image,
+                description,
+                stock: parseNumber(stock),
+                isHit: parseBoolean(isHit),
+                isFeatured: parseBoolean(isFeatured),
+            });
+            
+            res.status(201).json({
+                message: "Mahsulot qo‘shildi.",
+                product,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Mahsulot qo‘shishda xatolik.",
+                error: error.message,
+            });
+        }
+    }
+);
+
+/**
+* Mahsulot tahrirlash
+* PUT /api/products/:id
+*/
+router.put(
+    "/:id",
+    protect,
+    adminOnly,
+    uploadImage.single("imageFile"),
+    async (req, res) => {
+        try {
+            const {
+                name,
+                category,
+                price,
+                oldPrice,
+                imageUrl,
+                description,
+                stock,
+                isHit,
+                isFeatured,
+            } = req.body;
+            
+            const product = await Product.findById(req.params.id);
+            
+            if (!product) {
+                return res.status(404).json({
+                    message: "Mahsulot topilmadi.",
+                });
+            }
+            
+            let image = product.image;
+            
+            if (imageUrl) {
+                image = imageUrl;
+            }
+            
+            if (req.file) {
+                image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+            }
+            
+            product.name = name || product.name;
+            product.category = category || product.category;
+            product.price = price !== undefined ? parseNumber(price) : product.price;
+            product.oldPrice =
+            oldPrice !== undefined ? parseNumber(oldPrice) : product.oldPrice;
+            product.image = image;
+            product.description = description || product.description;
+            product.stock = stock !== undefined ? parseNumber(stock) : product.stock;
+            product.isHit = isHit !== undefined ? parseBoolean(isHit) : product.isHit;
+            product.isFeatured =
+            isFeatured !== undefined ? parseBoolean(isFeatured) : product.isFeatured;
+            
+            await product.save();
+            
+            res.json({
+                message: "Mahsulot yangilandi.",
+                product,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Mahsulotni yangilashda xatolik.",
+                error: error.message,
+            });
+        }
+    }
+);
+
+/**
 * Mahsulot o‘chirish
 * DELETE /api/products/:id
-* Admin
 */
 router.delete("/:id", protect, adminOnly, async (req, res) => {
     try {

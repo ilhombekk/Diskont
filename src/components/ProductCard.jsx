@@ -8,11 +8,22 @@ function ProductCard({ product }) {
     
     const isAvailable = product.stock > 0;
     
+    const hasDiscount = product.oldPrice && product.oldPrice > product.price;
+    
+    const discountPercent = hasDiscount
+    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+    : 0;
+    
     return (
         <div className="product-card diskont-card">
         <div className="product-badges">
-        <span className="badge hit">Hit sezon</span>
-        <span className="badge benefit">Foyda</span>
+        {product.isHit && <span className="badge hit">Hit</span>}
+        
+        {product.isFeatured && <span className="badge benefit">Top</span>}
+        
+        {hasDiscount && (
+            <span className="badge discount">-{discountPercent}%</span>
+        )}
         </div>
         
         <Link to={`/product/${product._id}`} className="product-image-box">
@@ -35,6 +46,10 @@ function ProductCard({ product }) {
         <p className="monthly-price">
         {monthlyPrice.toLocaleString()} so‘m/oy
         </p>
+        
+        {hasDiscount && (
+            <p className="old-price">{product.oldPrice.toLocaleString()} so‘m</p>
+        )}
         
         <p className="price">{product.price.toLocaleString()} so‘m</p>
         
