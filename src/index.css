@@ -1774,3 +1774,145 @@ MOBILE RESPONSIVE FIX
 .mobile-admin-link {
   opacity: 0.75;
 }
+
+/* =========================
+ORDER STATUS + ADMIN NOTE
+========================= */
+
+.order-status-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.status-new {
+  background: #fff3e6;
+  color: #ff7a00;
+}
+
+.status-accepted {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-delivered {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.admin-note-input {
+  width: 100%;
+  min-height: 72px;
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.order-products {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-product-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-product-info img {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f8fafc;
+}
+
+/* =========================
+MOBILE BOTTOM NAVIGATION
+========================= */
+
+.mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .mobile-bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 62px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    z-index: 999;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.08);
+  }
+  
+  .mobile-bottom-nav a {
+    position: relative;
+    color: #374151;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  
+  .mobile-bottom-nav span {
+    font-size: 19px;
+  }
+  
+  .mobile-bottom-cart b {
+    position: absolute;
+    top: 5px;
+    right: 22%;
+    background: #ff7a00;
+    color: white;
+    min-width: 19px;
+    height: 19px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+  }
+  
+  body {
+    padding-bottom: 70px;
+  }
+  
+  .order-top {
+    flex-direction: column;
+  }
+  
+  .order-status-box {
+    align-items: flex-start;
+  }
+  
+  .order-product-row {
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

@@ -32,6 +32,7 @@ const orderSchema = new mongoose.Schema(
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
+            default: null,
         },
         
         customerName: {
@@ -65,6 +66,11 @@ const orderSchema = new mongoose.Schema(
             type: String,
             enum: ["new", "accepted", "delivered", "cancelled"],
             default: "new",
+        },
+        
+        adminNote: {
+            type: String,
+            default: "",
         },
     },
     {

@@ -23,6 +23,7 @@ function Home() {
         "Mikroto‘lqinli pech",
         "Smartfon",
         "Noutbuk",
+        "telefon",
     ];
     
     const getProducts = async () => {
@@ -63,14 +64,19 @@ function Home() {
         <section className="diskont-hero">
         <div className="hero-content">
         <span className="hero-label">Texnika va elektronika</span>
+        
         <h1>Maishiy texnikalarni qulay narxlarda xarid qiling</h1>
+        
         <p>
         Televizor, muzlatgich, konditsioner, kir yuvish mashinasi va
         boshqa texnikalar uchun zamonaviy online do‘kon.
         </p>
         
         <div className="hero-actions">
+        <a href="#products">
         <button>Katalogni ko‘rish</button>
+        </a>
+        
         <span>12 oygacha muddatli to‘lov</span>
         </div>
         </div>
@@ -106,9 +112,10 @@ function Home() {
             </div>
             </section>
             
-            <section className="products-section">
+            <section className="products-section" id="products">
             <div className="section-head">
             <h2>Mahsulotlar</h2>
+            
             <button onClick={clearFilters} className="clear-filter-btn">
             Filtrlarni tozalash
             </button>
