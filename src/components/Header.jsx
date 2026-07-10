@@ -18,19 +18,28 @@ function Header() {
         <div className="top-header">
         <div className="container top-header-content">
         <div className="top-links">
-        <a href="#">Bizning do‘konlar</a>
-        <a href="#">To‘lov usullari</a>
-        <a href="#">Yetkazib berish</a>
+        <a href="#">Наши магазины</a>
+        <a href="#">Способы оплаты</a>
+        <a href="#">Рассрочка</a>
+        <a href="#">Возврат и обмен</a>
+        <a href="#">Доставка</a>
         </div>
         
-        <div className="contact-center">
-        <span>Kontakt:</span>
-        <b>+998 99 818 00 25</b>
+        <div className="top-right">
+        <span>
+        Контакт центр: <b>+998 71 207 77 88</b>
+        </span>
         
         {!user && (
-            <Link to="/admin-login" className="admin-login-link">
+            <Link to="/admin-login" className="admin-login-top">
             Admin panel
             </Link>
+        )}
+        
+        {isAdmin && (
+            <button onClick={handleLogout} className="logout-top-btn">
+            Chiqish
+            </button>
         )}
         </div>
         </div>
@@ -38,29 +47,22 @@ function Header() {
         
         <header className="main-header">
         <div className="container main-header-content">
-        <div className="mobile-header-top">
         <Link to="/" className="brand-logo">
-        <span>Diskont</span>
-        <small>tech market</small>
+        DISKONT
         </Link>
-        
-        <Link to="/cart" className="mobile-cart-btn">
-        🛒
-        {totalCount > 0 && <b>{totalCount}</b>}
-        </Link>
-        </div>
         
         <div className="header-search">
-        <input type="text" placeholder="Mahsulot qidirish..." />
-        <button>Qidirish</button>
+        <button className="catalog-btn">
+        <span>☰</span>
+        Каталог
+        </button>
+        
+        <input type="text" placeholder="Поиск по каталогу" />
+        
+        <button className="search-btn">⌕</button>
         </div>
         
         <nav className="header-actions">
-        <Link to="/" className="header-action">
-        <span>🏠</span>
-        Bosh sahifa
-        </Link>
-        
         {isAdmin && (
             <>
             <Link to="/admin/dashboard" className="header-action">
@@ -80,39 +82,34 @@ function Header() {
             </>
         )}
         
-        <Link to="/cart" className="header-action desktop-cart-action">
+        <Link to="/cart" className="header-action cart-action">
         <span>🛒</span>
-        Savatcha
+        Корзина
         {totalCount > 0 && <b>{totalCount}</b>}
         </Link>
         
-        {isAdmin && (
-            <button onClick={handleLogout} className="mobile-logout-btn">
-            Chiqish
-            </button>
-        )}
-        
         {!user && (
-            <Link to="/admin-login" className="header-action mobile-admin-link">
-            <span>🔐</span>
-            Admin
+            <Link to="/admin-login" className="header-action">
+            <span>👤</span>
+            Войти
             </Link>
         )}
         </nav>
         </div>
-        </header>
         
-        <div className="category-strip">
-        <div className="container category-strip-content">
-        <Link to="#">Smartfonlar</Link>
-        <Link to="#">Konditsionerlar</Link>
-        <Link to="#">Noutbuklar</Link>
-        <Link to="#">Televizorlar</Link>
-        <Link to="#">Muzlatgichlar</Link>
-        <Link to="#">Kir yuvish</Link>
-        <Link to="#">Changyutgichlar</Link>
+        <div className="container category-menu">
+        <Link to="#">Смартфоны</Link>
+        <Link to="#">Кондиционеры</Link>
+        <Link to="#">Ноутбуки</Link>
+        <Link to="#">Телевизоры</Link>
+        <Link to="#">Холодильники</Link>
+        <Link to="#">Морозильник</Link>
+        <Link to="#">Стиральные машины</Link>
+        <Link to="#">Утюги</Link>
+        <Link to="#">Отпариватели</Link>
+        <Link to="#">Мини печи</Link>
         </div>
-        </div>
+        </header>
         </>
     );
 }
