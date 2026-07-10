@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
@@ -8,9 +9,44 @@ function Header() {
     const { totalCount } = useCart();
     const { user, logout, isAdmin } = useAuth();
     
+    const [search, setSearch] = useState("");
+    const [catalogOpen, setCatalogOpen] = useState(false);
+    
+    const categories = [
+        "Смартфоны",
+        "Кондиционеры",
+        "Ноутбуки",
+        "Телевизоры",
+        "Холодильники",
+        "Морозильник",
+        "Стиральные машины",
+        "Утюги",
+        "Отпариватели",
+        "Мини печи",
+        "Пылесосы",
+        "Принтеры",
+    ];
+    
     const handleLogout = () => {
         logout();
         navigate("/");
+    };
+    
+    const submitSearch = (e) => {
+        e.preventDefault();
+        
+        const query = search.trim();
+        
+        if (query) {
+            navigate(`/?search=${encodeURIComponent(query)}#products`);
+        } else {
+            navigate("/#products");
+        }
+    };
+    
+    const goToCategory = (category) => {
+        setCatalogOpen(false);
+        navigate(`/?category=${encodeURIComponent(category)}#products`);
     };
     
     return (
@@ -27,7 +63,7 @@ function Header() {
         
         <div className="top-right">
         <span>
-        Контакт центр: <b>+998 71 207 77 88</b>
+        Контакт центр: <b>+998 99 818 00 25</b>
         </span>
         
         {!user && (
@@ -51,15 +87,42 @@ function Header() {
         DISKONT
         </Link>
         
-        <div className="header-search">
-        <button className="catalog-btn">
+        <div className="header-search-wrapper">
+        <form onSubmit={submitSearch} className="header-search">
+        <button
+        type="button"
+        className="catalog-btn"
+        onClick={() => setCatalogOpen(!catalogOpen)}
+        >
         <span>☰</span>
         Каталог
         </button>
         
-        <input type="text" placeholder="Поиск по каталогу" />
+        <input
+        type="text"
+        placeholder="Поиск по каталогу"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        />
         
-        <button className="search-btn">⌕</button>
+        <button type="submit" className="search-btn">
+        ⌕
+        </button>
+        </form>
+        
+        {catalogOpen && (
+            <div className="catalog-dropdown">
+            {categories.map((category) => (
+                <button
+                key={category}
+                type="button"
+                onClick={() => goToCategory(category)}
+                >
+                {category}
+                </button>
+            ))}
+            </div>
+        )}
         </div>
         
         <nav className="header-actions">
@@ -98,16 +161,11 @@ function Header() {
         </div>
         
         <div className="container category-menu">
-        <Link to="#">Смартфоны</Link>
-        <Link to="#">Кондиционеры</Link>
-        <Link to="#">Ноутбуки</Link>
-        <Link to="#">Телевизоры</Link>
-        <Link to="#">Холодильники</Link>
-        <Link to="#">Морозильник</Link>
-        <Link to="#">Стиральные машины</Link>
-        <Link to="#">Утюги</Link>
-        <Link to="#">Отпариватели</Link>
-        <Link to="#">Мини печи</Link>
+        {categories.slice(0, 10).map((category) => (
+            <button key={category} onClick={() => goToCategory(category)}>
+            {category}
+            </button>
+        ))}
         </div>
         </header>
         </>

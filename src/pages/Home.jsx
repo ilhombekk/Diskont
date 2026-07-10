@@ -1,16 +1,27 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import api from "../api/api";
 
 function Home() {
+    const [searchParams] = useSearchParams();
+    
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
+    
+    const search = searchParams.get("search") || "";
+    const category = searchParams.get("category") || "";
     
     const getProducts = async () => {
         try {
             setLoading(true);
             
-            const response = await api.get("/products");
+            const response = await api.get("/products", {
+                params: {
+                    search,
+                    category: category || "Barchasi",
+                },
+            });
             
             setProducts(response.data);
         } catch (error) {
@@ -22,7 +33,7 @@ function Home() {
     
     useEffect(() => {
         getProducts();
-    }, []);
+    }, [search, category]);
     
     return (
         <div className="home-page">
@@ -55,51 +66,67 @@ function Home() {
         </div>
         
         <div className="popular-category-grid">
-        <button>
+        <a href="/?category=Смартфоны#products">
         <span>◆</span>
         Смартфоны
-        </button>
+        </a>
         
-        <button>
+        <a href="/?category=Кондиционеры#products">
         <span>◆</span>
         Кондиционеры
-        </button>
+        </a>
         
-        <button>
+        <a href="/?category=Ноутбуки#products">
         <span>◆</span>
         Ноутбуки
-        </button>
+        </a>
         
-        <button>
+        <a href="/?category=Телевизоры#products">
         <span>◆</span>
         Телевизоры
-        </button>
+        </a>
         
-        <button>
+        <a href="/?category=Холодильники#products">
         <span>◆</span>
         Холодильники
-        </button>
+        </a>
         
-        <button>
+        <a href="/?category=Стиральные машины#products">
         <span>◆</span>
         Стиральные машины
-        </button>
+        </a>
         
-        <button>
+        <a href="/?category=Морозильник#products">
         <span>◆</span>
         Морозильник
-        </button>
+        </a>
         
-        <button>
+        <a href="/?category=Мини печи#products">
         <span>◆</span>
         Мини печи
-        </button>
+        </a>
         </div>
         </section>
         
         <section className="products-section" id="products">
         <div className="section-head">
+        <div>
         <h2>Mahsulotlar</h2>
+        
+        {(search || category) && (
+            <p className="active-filter-text">
+            {search && <>Qidiruv: <b>{search}</b></>}
+            {search && category && " | "}
+            {category && <>Kategoriya: <b>{category}</b></>}
+            </p>
+        )}
+        </div>
+        
+        {(search || category) && (
+            <a href="/#products" className="clear-filter-btn">
+            Filtrlarni tozalash
+            </a>
+        )}
         </div>
         
         {loading ? (
