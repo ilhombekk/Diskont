@@ -14,6 +14,8 @@ function ProductCard({ product }) {
     ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
     : 0;
     
+    const productId = product._id;
+    
     return (
         <div className="product-card diskont-card">
         <div className="product-badges">
@@ -26,16 +28,16 @@ function ProductCard({ product }) {
         )}
         </div>
         
-        <Link to={`/product/${product._id}`} className="product-image-box">
+        <Link to={`/product/${productId}`} className="product-image-box">
         <img src={product.image} alt={product.name} />
         </Link>
         
         <div className="product-info">
-        <Link to={`/product/${product._id}`} className="product-category">
+        <Link to={`/product/${productId}`} className="product-category">
         {product.category}
         </Link>
         
-        <Link to={`/product/${product._id}`} className="product-title">
+        <Link to={`/product/${productId}`} className="product-title">
         {product.name}
         </Link>
         

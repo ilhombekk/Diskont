@@ -20,7 +20,15 @@ const parseBoolean = (value) => {
 };
 
 const parseNumber = (value, defaultValue = 0) => {
-    const number = Number(value);
+    if (value === undefined || value === null || value === "") {
+        return defaultValue;
+    }
+    
+    const cleaned = String(value)
+    .replace(/\s/g, "")
+    .replace(/,/g, ".");
+    
+    const number = Number(cleaned);
     
     return Number.isNaN(number) ? defaultValue : number;
 };
@@ -144,11 +152,11 @@ router.get("/", async (req, res) => {
             filter.price = {};
             
             if (minPrice) {
-                filter.price.$gte = Number(minPrice);
+                filter.price.$gte = parseNumber(minPrice);
             }
             
             if (maxPrice) {
-                filter.price.$lte = Number(maxPrice);
+                filter.price.$lte = parseNumber(maxPrice);
             }
         }
         
@@ -166,6 +174,9 @@ router.get("/", async (req, res) => {
 /**
 * CSV orqali mahsulot import qilish
 * POST /api/products/import
+*
+* MUHIM:
+* Bu route /:id dan oldin turishi shart.
 */
 router.post(
     "/import",
@@ -265,14 +276,20 @@ router.post(
 /**
 * Bitta mahsulot
 * GET /api/products/:id
+*
+* MUHIM:
+* Bu route /import dan keyin turishi kerak.
 */
 router.get("/:id", async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const { id } = req.params;
+        
+        const product = await Product.findById(id);
         
         if (!product) {
             return res.status(404).json({
                 message: "Mahsulot topilmadi.",
+                id,
             });
         }
         

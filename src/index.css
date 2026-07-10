@@ -1550,3 +1550,61 @@ RESPONSIVE
     width: 100%;
   }
 }
+.product-detail-info h1 {
+  margin: 8px 0 14px;
+  font-size: 34px;
+  line-height: 1.2;
+}
+
+.product-detail-category {
+  display: inline-block;
+  color: var(--accent-dark);
+  font-weight: 900;
+  margin: 0;
+}
+
+.detail-badges {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 16px;
+  flex-wrap: wrap;
+}
+
+.detail-old-price {
+  font-size: 18px;
+}
+
+.detail-stock {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.detail-actions .btn,
+.detail-cart-link {
+  width: auto;
+}
+
+.detail-cart-link {
+  display: inline-block;
+}
+
+@media (max-width: 700px) {
+  .product-detail-info h1 {
+    font-size: 25px;
+  }
+  
+  .detail-actions {
+    flex-direction: column;
+  }
+  
+  .detail-actions .btn,
+  .detail-cart-link {
+    width: 100%;
+  }
+}
